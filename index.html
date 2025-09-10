@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cousin Contribution Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 min-h-screen flex flex-col items-center">
+  <div class="w-full max-w-5xl bg-white shadow-2xl rounded-2xl p-6 mt-8">
+    <h1 class="text-3xl font-extrabold text-center text-pink-600 mb-6">🎉 Cousin Contribution Tracker 🎉</h1>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
+      <div class="bg-pink-100 p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold text-pink-600">🏆 Total</h2>
+        <p id="totalContrib" class="text-2xl font-bold text-pink-800">$0</p>
+      </div>
+      <div class="bg-purple-100 p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold text-purple-600">👥 Cousins</h2>
+        <p id="cousinCount" class="text-2xl font-bold text-purple-800">0</p>
+      </div>
+      <div class="bg-blue-100 p-6 rounded-xl shadow">
+        <h2 class="text-xl font-semibold text-blue-600">📊 Average</h2>
+        <p id="avgContrib" class="text-2xl font-bold text-blue-800">$0</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="flex flex-col md:flex-row gap-4 mb-6">
+      <input id="name" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Cousin Name">
+      <input id="amount" type="number" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Contribution Amount">
+      <input id="note" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Note (optional)">
+      <button onclick="addContribution()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 py-3 rounded-xl transition">Add</button>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-center">
+        <thead>
+          <tr class="bg-gradient-to-r from-pink-400 to-purple-400 text-white">
+            <th class="p-3">Name</th>
+            <th class="p-3">Amount</th>
+            <th class="p-3">Note</th>
+            <th class="p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="contribTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid md:grid-cols-2 gap-6 mt-8">
+      <div class="bg-pink-50 p-4 rounded-xl shadow">
+        <h2 class="text-lg font-semibold text-pink-600 mb-2">Contribution Breakdown</h2>
+        <canvas id="pieChart"></canvas>
+      </div>
+      <div class="bg-blue-50 p-4 rounded-xl shadow">
+        <h2 class="text-lg font-semibold text-blue-600 mb-2">Total Contributions</h2>
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Reset & Export -->
+    <div class="flex justify-center gap-4 mt-6 flex-wrap">
+      <button onclick="resetData()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-3 rounded-xl transition">Reset All</button>
+      <button onclick="exportCSV()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl transition">Export CSV</button>
+      <button onclick="exportPDF()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl transition">Export PDF</button>
+    </div>
+  </div>
+
+  <script>
+    let contributions = JSON.parse(localStorage.getItem("cousins")) || [];
+
+    function saveData() {
+      localStorage.setItem("cousins", JSON.stringify(contributions));
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("contribTable");
+      tbody.innerHTML = "";
+      contributions.forEach((c, i) => {
+        tbody.innerHTML += `
+          <tr class="border-b">
+            <td class="p-3">${c.name}</td>
+            <td class="p-3">$${c.amount}</td>
+            <td class="p-3">${c.note || "-"}</td>
+            <td class="p-3">
+              <button onclick="deleteContribution(${i})" class="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+            </td>
+          </tr>`;
+      });
+      updateSummary();
+      renderCharts();
+    }
+
+    function addContribution() {
+      const name = document.getElementById("name").value.trim();
+      const amount = Number(document.getElementById("amount").value);
+      const note = document.getElementById("note").value.trim();
+      if (!name || !amount) return alert("Please enter valid name and amount!");
+
+      contributions.push({ name, amount, note });
+      saveData();
+      renderTable();
+      document.getElementById("name").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("note").value = "";
+    }
+
+    function deleteContribution(index) {
+      contributions.splice(index, 1);
+      saveData();
+      renderTable();
+    }
+
+    function resetData() {
+      if (confirm("Are you sure you want to reset all data?")) {
+        contributions = [];
+        saveData();
+        renderTable();
+      }
+    }
+
+    function updateSummary() {
+      const total = contributions.reduce((sum, c) => sum + c.amount, 0);
+      const count = contributions.length;
+      const avg = count ? (total / count).toFixed(2) : 0;
+
+      document.getElementById("totalContrib").textContent = `$${total}`;
+      document.getElementById("cousinCount").textContent = count;
+      document.getElementById("avgContrib").textContent = `$${avg}`;
+    }
+
+    function renderCharts() {
+      const pieCtx = document.getElementById("pieChart").getContext("2d");
+      const barCtx = document.getElementById("barChart").getContext("2d");
+
+      if (window.pieChart) window.pieChart.destroy();
+      if (window.barChart) window.barChart.destroy();
+
+      window.pieChart = new Chart(pieCtx, {
+        type: "pie",
+        data: {
+          labels: contributions.map(c => c.name),
+          datasets: [{
+            data: contributions.map(c => c.amount),
+            backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24", "#a78bfa"]
+          }]
+        }
+      });
+
+      window.barChart = new Chart(barCtx, {
+        type: "bar",
+        data: {
+          labels: contributions.map(c => c.name),
+          datasets: [{
+            label: "Amount",
+            data: contributions.map(c => c.amount),
+            backgroundColor: "#3b82f6"
+          }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+      });
+    }
+
+    function exportCSV() {
+      if (contributions.length === 0) return alert("No data to export!");
+      let csv = "Name,Amount,Note\n";
+      contributions.forEach(c => {
+        csv += `${c.name},${c.amount},${c.note || ""}\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "contributions.csv";
+      a.click();
+    }
+
+    async function exportPDF() {
+      if (contributions.length === 0) return alert("No data to export!");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.text("Cousin Contribution Report", 14, 20);
+
+      doc.setFontSize(12);
+      let y = 40;
+      contributions.forEach(c => {
+        doc.text(`${c.name} - $${c.amount} (${c.note || "No note"})`, 14, y);
+        y += 10;
+      });
+
+      doc.save("contributions.pdf");
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
