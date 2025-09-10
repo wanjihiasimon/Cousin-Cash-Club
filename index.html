@@ -5,22 +5,161 @@
   <title>Cousin Contribution Hub 🎉</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #fdf6e3; color: #333; }
-    h1, h2 { text-align: center; color: #ff4081; }
-    .container { max-width: 900px; margin: auto; padding: 20px; }
-    .form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-    input, button { padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background: #ffccbc; }
-    button { background: #ff4081; color: white; border: none; cursor: pointer; }
-    button:hover { background: #e91e63; }
-    #stats { display: flex; justify-content: space-around; margin: 20px 0; font-size: 18px; font-weight: bold; }
-    #countdown { text-align: center; font-size: 18px; margin: 15px; }
-    #loginScreen { text-align: center; margin-top: 100px; }
-    #loginScreen input { padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
-    #loginScreen button { margin-top: 10px; }
-    #verse { margin-top: 20px; font-style: italic; font-size: 16px; }
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #e3f2fd, #fff3e0);
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #0277bd;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      flex: 1 1 150px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #ffcc80;
+      color: #000;
+    }
+    button {
+      background: #0288d1;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #01579b;
+    }
+
+    /* Stats cards */
+    #stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      flex: 1 1 200px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .stat-card span {
+      display: block;
+      font-size: 22px;
+      margin-top: 5px;
+    }
+    .blue { border-top: 6px solid #0288d1; }
+    .orange { border-top: 6px solid #fb8c00; }
+    .green { border-top: 6px solid #43a047; }
+
+    /* Countdown */
+    #countdown {
+      text-align: center;
+      font-size: 18px;
+      margin: 15px;
+      font-weight: bold;
+      color: #d84315;
+    }
+
+    /* Login screen */
+    #loginScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #42a5f5, #ffb74d, #66bb6a);
+      color: #fff;
+      animation: fadeIn 2s ease;
+    }
+    #loginScreen h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    #loginScreen input {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin: 10px 0;
+      width: 220px;
+      text-align: center;
+    }
+    #loginScreen button {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #0288d1;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    #loginScreen button:hover {
+      transform: scale(1.05);
+      background: #01579b;
+    }
+    #verse {
+      margin-top: 20px;
+      font-style: italic;
+      font-size: 16px;
+      max-width: 500px;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 600px) {
+      .form {
+        flex-direction: column;
+      }
+      input, button {
+        flex: 1 1 100%;
+      }
+      #stats {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -29,14 +168,12 @@
     <h1>🔐 Cousin Contribution Hub</h1>
     <p id="verse">"How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing." – Psalm 133:1 (adapted)</p>
     <input id="loginPass" type="password" placeholder="Enter password">
-    <br>
     <button onclick="login()">Login</button>
   </div>
 
   <!-- Main App -->
   <div id="app" style="display:none;" class="container">
     <h1>🎉 Cousin Contribution Tracker 🎉</h1>
-
     <div id="countdown"></div>
 
     <div class="form">
@@ -48,9 +185,9 @@
 
     <!-- Stats -->
     <div id="stats">
-      <div>💰 Total <span id="total">Ksh 0</span></div>
-      <div>👥 Contributors <span id="contributors">0</span></div>
-      <div>📊 Average <span id="average">Ksh 0</span></div>
+      <div class="stat-card blue">💰 Total <span id="total">Ksh 0</span></div>
+      <div class="stat-card orange">👥 Contributors <span id="contributors">0</span></div>
+      <div class="stat-card green">📊 Average <span id="average">Ksh 0</span></div>
     </div>
 
     <table>
@@ -166,7 +303,7 @@
           datasets: [{
             label: "Contributions (Ksh)",
             data: contributions.map(c => c.amount),
-            backgroundColor: "#ff4081"
+            backgroundColor: ["#42a5f5", "#fb8c00", "#66bb6a", "#ab47bc", "#ef5350"]
           }]
         },
         options: { responsive: true, plugins: { legend: { display: false } } }
@@ -175,7 +312,6 @@
 
     // Countdown Timer
     function countdown() {
-      const today = new Date("September 10, 2025").getTime();
       const endDate = new Date("November 30, 2025").getTime();
       const now = new Date().getTime();
       const distance = endDate - now;
