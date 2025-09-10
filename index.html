@@ -5,32 +5,43 @@
   <title>Cousin Contribution Hub 🎉</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body class="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 min-h-screen flex flex-col items-center">
-  <div class="w-full max-w-5xl bg-white shadow-2xl rounded-2xl p-6 mt-8">
+<body class="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 min-h-screen flex flex-col items-center justify-center">
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-6 text-center">
+    <h1 class="text-2xl font-bold text-purple-600 mb-4">🔑 Cousin Connection Login</h1>
+    <p class="text-gray-600 mb-4">Enter the password that represents the importance of cousin connection.</p>
+    <input id="loginPass" type="password" placeholder="Enter Password" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-purple-400 mb-4">
+    <button onclick="login()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-xl font-bold">Login</button>
+    <p id="loginMsg" class="text-red-500 mt-3 hidden">❌ Wrong password! Try again.</p>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app" class="hidden w-full max-w-5xl bg-white shadow-2xl rounded-2xl p-6 mt-8">
+
+    <!-- Countdown -->
+    <div id="countdownBox" class="bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 text-center p-4 rounded-xl mb-6 shadow-md">
+      <h2 class="text-xl font-bold text-purple-800">⏳ Contribution Countdown</h2>
+      <p id="countdownText" class="text-lg text-gray-800 mt-2"></p>
+      
+      <!-- Progress bar -->
+      <div class="w-full bg-gray-300 rounded-full h-5 mt-3">
+        <div id="progressBar" class="h-5 rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 text-xs font-bold text-white text-center"></div>
+      </div>
+    </div>
+
     <h1 class="text-3xl font-extrabold text-center text-pink-600 mb-6">🎉 Cousin Contribution Hub 🎉</h1>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
-      <div class="bg-pink-100 p-6 rounded-xl shadow">
-        <h2 class="text-xl font-semibold text-pink-600">🏆 Total</h2>
-        <p id="totalContrib" class="text-2xl font-bold text-pink-800">KSH 0</p>
-      </div>
-      <div class="bg-purple-100 p-6 rounded-xl shadow">
-        <h2 class="text-xl font-semibold text-purple-600">👥 Cousins</h2>
-        <p id="cousinCount" class="text-2xl font-bold text-purple-800">0</p>
-      </div>
-      <div class="bg-blue-100 p-6 rounded-xl shadow">
-        <h2 class="text-xl font-semibold text-blue-600">📊 Average</h2>
-        <p id="avgContrib" class="text-2xl font-bold text-blue-800">KSH 0</p>
-      </div>
+    <!-- Running Total -->
+    <div class="bg-green-100 p-4 rounded-xl text-center mb-6 shadow-md">
+      <h2 class="text-xl font-bold text-green-700">💰 Total Contributions: <span id="totalContrib">Ksh 0</span></h2>
     </div>
 
     <!-- Form -->
     <div class="flex flex-col md:flex-row gap-4 mb-6">
       <input id="name" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Cousin Name">
-      <input id="amount" type="number" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Contribution Amount (KSH)">
+      <input id="amount" type="number" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Contribution Amount (Ksh)">
       <input id="note" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Note (optional)">
       <button onclick="addContribution()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 py-3 rounded-xl transition">Add</button>
     </div>
@@ -41,7 +52,7 @@
         <thead>
           <tr class="bg-gradient-to-r from-pink-400 to-purple-400 text-white">
             <th class="p-3">Name</th>
-            <th class="p-3">Amount (KSH)</th>
+            <th class="p-3">Amount (Ksh)</th>
             <th class="p-3">Note</th>
             <th class="p-3">Actions</th>
           </tr>
@@ -50,28 +61,69 @@
       </table>
     </div>
 
-    <!-- Charts -->
-    <div class="mt-8 bg-blue-50 p-4 rounded-xl shadow">
-      <h2 class="text-lg font-semibold text-blue-600 mb-2">Bar Chart: Contributions (KSH)</h2>
+    <!-- Bar Chart -->
+    <div class="bg-blue-50 p-4 rounded-xl shadow mt-8">
+      <h2 class="text-lg font-semibold text-blue-600 mb-2">Total Contributions (Ksh)</h2>
       <canvas id="barChart"></canvas>
     </div>
 
-    <!-- Reset & Export -->
-    <div class="flex justify-center gap-4 mt-6 flex-wrap">
+    <!-- Reset -->
+    <div class="flex justify-center mt-6">
       <button onclick="resetData()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-3 rounded-xl transition">Reset All</button>
-      <button onclick="exportCSV()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl transition">Export CSV</button>
-      <button onclick="exportPDF()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl transition">Export PDF</button>
+    </div>
+
+    <!-- Bible Verse -->
+    <div class="mt-8 text-center text-purple-700 italic font-semibold">
+      <p>"How good and pleasant it is when God’s people live together in unity!" – Psalm 133:1</p>
     </div>
   </div>
 
   <script>
-    const PASSWORD = "thewanjihias";
     let contributions = JSON.parse(localStorage.getItem("cousins")) || [];
 
+    // LOGIN
+    function login() {
+      const pass = document.getElementById("loginPass").value;
+      if (pass === "lifelong") {
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+        updateCountdown();
+      } else {
+        document.getElementById("loginMsg").classList.remove("hidden");
+      }
+    }
+
+    // Countdown + Progress
+    function updateCountdown() {
+      const startDate = new Date("2025-09-10"); // Start date
+      const deadline = new Date("2025-11-30");
+      const today = new Date("2025-09-10"); // fixed today's date for demo
+
+      const totalTime = deadline - startDate;
+      const timePassed = today - startDate;
+      const daysLeft = Math.floor((deadline - today) / (1000 * 60 * 60 * 24));
+
+      const percent = Math.min(100, Math.max(0, (timePassed / totalTime) * 100));
+
+      const textEl = document.getElementById("countdownText");
+      const barEl = document.getElementById("progressBar");
+
+      if (daysLeft > 0) {
+        textEl.textContent = `You have ${daysLeft} days left to make contributions (until 30 Nov 2025).`;
+      } else {
+        textEl.textContent = "⚠️ The contribution period has ended.";
+      }
+
+      barEl.style.width = percent + "%";
+      barEl.textContent = Math.round(percent) + "%";
+    }
+
+    // Save data
     function saveData() {
       localStorage.setItem("cousins", JSON.stringify(contributions));
     }
 
+    // Render Table
     function renderTable() {
       const tbody = document.getElementById("contribTable");
       tbody.innerHTML = "";
@@ -79,19 +131,26 @@
         tbody.innerHTML += `
           <tr class="border-b">
             <td class="p-3">${c.name}</td>
-            <td class="p-3">KSH ${c.amount}</td>
+            <td class="p-3">Ksh ${c.amount}</td>
             <td class="p-3">${c.note || "-"}</td>
-            <td class="p-3 flex justify-center gap-2">
+            <td class="p-3">
               <button onclick="editContribution(${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
               <button onclick="deleteContribution(${i})" class="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded">Delete</button>
             </td>
           </tr>`;
       });
-      updateSummary();
       renderCharts();
+      updateTotal();
     }
 
+    // Add Contribution
     function addContribution() {
+      const pass = prompt("Enter password to add contribution:");
+      if (pass !== "thewanjihias") {
+        alert("❌ Wrong password!");
+        return;
+      }
+
       const name = document.getElementById("name").value.trim();
       const amount = Number(document.getElementById("amount").value);
       const note = document.getElementById("note").value.trim();
@@ -105,33 +164,34 @@
       document.getElementById("note").value = "";
     }
 
-    function checkPassword() {
-      const input = prompt("Enter password:");
-      return input === PASSWORD;
-    }
-
+    // Edit Contribution
     function editContribution(index) {
-      if (!checkPassword()) return alert("Wrong password!");
+      const pass = prompt("Enter password to edit:");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password!");
       const c = contributions[index];
       const newName = prompt("Edit name:", c.name);
-      const newAmount = prompt("Edit amount (KSH):", c.amount);
-      const newNote = prompt("Edit note:", c.note || "");
+      const newAmount = Number(prompt("Edit amount (Ksh):", c.amount));
+      const newNote = prompt("Edit note:", c.note);
       if (newName && newAmount) {
-        contributions[index] = { name: newName, amount: Number(newAmount), note: newNote };
+        contributions[index] = { name: newName, amount: newAmount, note: newNote };
         saveData();
         renderTable();
       }
     }
 
+    // Delete Contribution
     function deleteContribution(index) {
-      if (!checkPassword()) return alert("Wrong password!");
+      const pass = prompt("Enter password to delete:");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password!");
       contributions.splice(index, 1);
       saveData();
       renderTable();
     }
 
+    // Reset Data
     function resetData() {
-      if (!checkPassword()) return alert("Wrong password!");
+      const pass = prompt("Enter password to reset all:");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password!");
       if (confirm("Are you sure you want to reset all data?")) {
         contributions = [];
         saveData();
@@ -139,71 +199,28 @@
       }
     }
 
-    function updateSummary() {
-      const total = contributions.reduce((sum, c) => sum + c.amount, 0);
-      const count = contributions.length;
-      const avg = count ? (total / count).toFixed(2) : 0;
-
-      document.getElementById("totalContrib").textContent = `KSH ${total}`;
-      document.getElementById("cousinCount").textContent = count;
-      document.getElementById("avgContrib").textContent = `KSH ${avg}`;
-    }
-
+    // Render Charts
     function renderCharts() {
       const barCtx = document.getElementById("barChart").getContext("2d");
       if (window.barChart) window.barChart.destroy();
-
       window.barChart = new Chart(barCtx, {
         type: "bar",
         data: {
           labels: contributions.map(c => c.name),
           datasets: [{
-            label: "Amount (KSH)",
+            label: "Contribution (Ksh)",
             data: contributions.map(c => c.amount),
-            backgroundColor: contributions.map((_, i) => `hsl(${i * 50}, 70%, 60%)`)
+            backgroundColor: "#3b82f6"
           }]
         },
-        options: {
-          scales: { 
-            y: { 
-              beginAtZero: true,
-              ticks: { callback: value => "KSH " + value }
-            }
-          }
-        }
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
       });
     }
 
-    function exportCSV() {
-      if (contributions.length === 0) return alert("No data to export!");
-      let csv = "Name,Amount (KSH),Note\n";
-      contributions.forEach(c => {
-        csv += `${c.name},${c.amount},${c.note || ""}\n`;
-      });
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "contributions.csv";
-      a.click();
-    }
-
-    async function exportPDF() {
-      if (contributions.length === 0) return alert("No data to export!");
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      doc.setFontSize(18);
-      doc.text("Cousin Contribution Report", 14, 20);
-
-      doc.setFontSize(12);
-      let y = 40;
-      contributions.forEach(c => {
-        doc.text(`${c.name} - KSH ${c.amount} (${c.note || "No note"})`, 14, y);
-        y += 10;
-      });
-
-      doc.save("contributions.pdf");
+    // Update Total
+    function updateTotal() {
+      const total = contributions.reduce((sum, c) => sum + c.amount, 0);
+      document.getElementById("totalContrib").textContent = "Ksh " + total;
     }
 
     renderTable();
