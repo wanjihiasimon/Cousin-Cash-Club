@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cousin Contribution Tracker</title>
+  <title>Cousin Contribution Hub 🎉</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 min-h-screen flex flex-col items-center">
   <div class="w-full max-w-5xl bg-white shadow-2xl rounded-2xl p-6 mt-8">
-    <h1 class="text-3xl font-extrabold text-center text-pink-600 mb-6">🎉 Cousin Contribution Tracker 🎉</h1>
+    <h1 class="text-3xl font-extrabold text-center text-pink-600 mb-6">🎉 Cousin Contribution Hub 🎉</h1>
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
       <div class="bg-pink-100 p-6 rounded-xl shadow">
         <h2 class="text-xl font-semibold text-pink-600">🏆 Total</h2>
-        <p id="totalContrib" class="text-2xl font-bold text-pink-800">$0</p>
+        <p id="totalContrib" class="text-2xl font-bold text-pink-800">KSH 0</p>
       </div>
       <div class="bg-purple-100 p-6 rounded-xl shadow">
         <h2 class="text-xl font-semibold text-purple-600">👥 Cousins</h2>
@@ -23,14 +23,14 @@
       </div>
       <div class="bg-blue-100 p-6 rounded-xl shadow">
         <h2 class="text-xl font-semibold text-blue-600">📊 Average</h2>
-        <p id="avgContrib" class="text-2xl font-bold text-blue-800">$0</p>
+        <p id="avgContrib" class="text-2xl font-bold text-blue-800">KSH 0</p>
       </div>
     </div>
 
     <!-- Form -->
     <div class="flex flex-col md:flex-row gap-4 mb-6">
       <input id="name" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Cousin Name">
-      <input id="amount" type="number" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Contribution Amount">
+      <input id="amount" type="number" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Contribution Amount (KSH)">
       <input id="note" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-pink-400" placeholder="Note (optional)">
       <button onclick="addContribution()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 py-3 rounded-xl transition">Add</button>
     </div>
@@ -41,7 +41,7 @@
         <thead>
           <tr class="bg-gradient-to-r from-pink-400 to-purple-400 text-white">
             <th class="p-3">Name</th>
-            <th class="p-3">Amount</th>
+            <th class="p-3">Amount (KSH)</th>
             <th class="p-3">Note</th>
             <th class="p-3">Actions</th>
           </tr>
@@ -51,15 +51,9 @@
     </div>
 
     <!-- Charts -->
-    <div class="grid md:grid-cols-2 gap-6 mt-8">
-      <div class="bg-pink-50 p-4 rounded-xl shadow">
-        <h2 class="text-lg font-semibold text-pink-600 mb-2">Contribution Breakdown</h2>
-        <canvas id="pieChart"></canvas>
-      </div>
-      <div class="bg-blue-50 p-4 rounded-xl shadow">
-        <h2 class="text-lg font-semibold text-blue-600 mb-2">Total Contributions</h2>
-        <canvas id="barChart"></canvas>
-      </div>
+    <div class="mt-8 bg-blue-50 p-4 rounded-xl shadow">
+      <h2 class="text-lg font-semibold text-blue-600 mb-2">Bar Chart: Contributions (KSH)</h2>
+      <canvas id="barChart"></canvas>
     </div>
 
     <!-- Reset & Export -->
@@ -71,6 +65,7 @@
   </div>
 
   <script>
+    const PASSWORD = "thewanjihias";
     let contributions = JSON.parse(localStorage.getItem("cousins")) || [];
 
     function saveData() {
@@ -84,9 +79,10 @@
         tbody.innerHTML += `
           <tr class="border-b">
             <td class="p-3">${c.name}</td>
-            <td class="p-3">$${c.amount}</td>
+            <td class="p-3">KSH ${c.amount}</td>
             <td class="p-3">${c.note || "-"}</td>
-            <td class="p-3">
+            <td class="p-3 flex justify-center gap-2">
+              <button onclick="editContribution(${i})" class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
               <button onclick="deleteContribution(${i})" class="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded">Delete</button>
             </td>
           </tr>`;
@@ -109,13 +105,33 @@
       document.getElementById("note").value = "";
     }
 
+    function checkPassword() {
+      const input = prompt("Enter password:");
+      return input === PASSWORD;
+    }
+
+    function editContribution(index) {
+      if (!checkPassword()) return alert("Wrong password!");
+      const c = contributions[index];
+      const newName = prompt("Edit name:", c.name);
+      const newAmount = prompt("Edit amount (KSH):", c.amount);
+      const newNote = prompt("Edit note:", c.note || "");
+      if (newName && newAmount) {
+        contributions[index] = { name: newName, amount: Number(newAmount), note: newNote };
+        saveData();
+        renderTable();
+      }
+    }
+
     function deleteContribution(index) {
+      if (!checkPassword()) return alert("Wrong password!");
       contributions.splice(index, 1);
       saveData();
       renderTable();
     }
 
     function resetData() {
+      if (!checkPassword()) return alert("Wrong password!");
       if (confirm("Are you sure you want to reset all data?")) {
         contributions = [];
         saveData();
@@ -128,46 +144,39 @@
       const count = contributions.length;
       const avg = count ? (total / count).toFixed(2) : 0;
 
-      document.getElementById("totalContrib").textContent = `$${total}`;
+      document.getElementById("totalContrib").textContent = `KSH ${total}`;
       document.getElementById("cousinCount").textContent = count;
-      document.getElementById("avgContrib").textContent = `$${avg}`;
+      document.getElementById("avgContrib").textContent = `KSH ${avg}`;
     }
 
     function renderCharts() {
-      const pieCtx = document.getElementById("pieChart").getContext("2d");
       const barCtx = document.getElementById("barChart").getContext("2d");
-
-      if (window.pieChart) window.pieChart.destroy();
       if (window.barChart) window.barChart.destroy();
-
-      window.pieChart = new Chart(pieCtx, {
-        type: "pie",
-        data: {
-          labels: contributions.map(c => c.name),
-          datasets: [{
-            data: contributions.map(c => c.amount),
-            backgroundColor: ["#f87171", "#34d399", "#60a5fa", "#fbbf24", "#a78bfa"]
-          }]
-        }
-      });
 
       window.barChart = new Chart(barCtx, {
         type: "bar",
         data: {
           labels: contributions.map(c => c.name),
           datasets: [{
-            label: "Amount",
+            label: "Amount (KSH)",
             data: contributions.map(c => c.amount),
-            backgroundColor: "#3b82f6"
+            backgroundColor: contributions.map((_, i) => `hsl(${i * 50}, 70%, 60%)`)
           }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: {
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              ticks: { callback: value => "KSH " + value }
+            }
+          }
+        }
       });
     }
 
     function exportCSV() {
       if (contributions.length === 0) return alert("No data to export!");
-      let csv = "Name,Amount,Note\n";
+      let csv = "Name,Amount (KSH),Note\n";
       contributions.forEach(c => {
         csv += `${c.name},${c.amount},${c.note || ""}\n`;
       });
@@ -190,7 +199,7 @@
       doc.setFontSize(12);
       let y = 40;
       contributions.forEach(c => {
-        doc.text(`${c.name} - $${c.amount} (${c.note || "No note"})`, 14, y);
+        doc.text(`${c.name} - KSH ${c.amount} (${c.note || "No note"})`, 14, y);
         y += 10;
       });
 
