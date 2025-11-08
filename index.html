@@ -99,6 +99,16 @@
       color: #d84315;
     }
 
+    /* Marquee */
+    marquee {
+      background: #0288d1;
+      color: #fff;
+      padding: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
     /* Login screen */
     #loginScreen {
       display: flex;
@@ -176,9 +186,11 @@
   </style>
 </head>
 <body>
-  <div class="marquee">
-      How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing.
-    </div>
+
+  <marquee behavior="scroll" direction="left">
+    How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing. – Psalm 133:1
+  </marquee>
+
   <!-- Login Screen -->
   <div id="loginScreen">
     <h1>🔐 The Wanjihia's Contribution Hub</h1>
@@ -186,7 +198,7 @@
       <input id="loginPass" type="password" placeholder="Enter password">
       <button onclick="login()">Login</button>
     </div>
-    <p id="verse">"How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing." – Psalm 133:1 </p>
+    <p id="verse">"How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing." – Psalm 133:1</p>
   </div>
 
   <!-- Main App -->
@@ -219,7 +231,6 @@
   </div>
 
   <script>
-    // Preloaded contributions
     let contributions = [
       { name: "S.W.N", amount: 2400, note: "" },
       { name: "S.G.N", amount: 2400, note: "" },
@@ -228,7 +239,6 @@
     ];
     let chart;
 
-    // Login
     function login() {
       const pass = document.getElementById("loginPass").value;
       if (pass === "lifelong") {
@@ -240,7 +250,6 @@
       }
     }
 
-    // Update Stats
     function updateStats() {
       const total = contributions.reduce((sum, c) => sum + c.amount, 0);
       const count = contributions.length;
@@ -250,7 +259,6 @@
       document.getElementById("average").textContent = "Ksh " + avg;
     }
 
-    // Render Table
     function renderTable() {
       const tbody = document.getElementById("contribTable");
       tbody.innerHTML = "";
@@ -269,7 +277,6 @@
       renderChart();
     }
 
-    // Add Contribution (with password)
     function addContribution() {
       const pass = prompt("Enter password to add contribution:");
       if (pass !== "thewanjihias") return alert("❌ Wrong password!");
@@ -286,7 +293,6 @@
       document.getElementById("note").value = "";
     }
 
-    // Edit Entry
     function editEntry(i) {
       const pass = prompt("Enter password to edit:");
       if (pass !== "thewanjihias") return alert("❌ Wrong password!");
@@ -298,7 +304,6 @@
       renderTable();
     }
 
-    // Delete Entry
     function deleteEntry(i) {
       const pass = prompt("Enter password to delete:");
       if (pass !== "thewanjihias") return alert("❌ Wrong password!");
@@ -308,7 +313,6 @@
       }
     }
 
-    // Bar Chart
     function renderChart() {
       const ctx = document.getElementById("barChart").getContext("2d");
       if (chart) chart.destroy();
@@ -326,16 +330,15 @@
       });
     }
 
-    // Countdown Timer
     function countdown() {
       const endDate = new Date("November 30, 2025").getTime();
       const now = new Date().getTime();
-      const distance = endDate - now;
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const days = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
       document.getElementById("countdown").textContent =
         days >= 0 ? `⏳ Days left to contribute: ${days}` : "✅ Contributions closed!";
     }
-    setInterval(countdown, 1000);
+
+    setInterval(countdown, 60000);
     countdown();
 
     renderTable();
