@@ -282,7 +282,7 @@
 
     function addContribution() {
       const pass = prompt("Enter password to add contribution:");
-      if (pass !== "thewanjihias") return alert("❌ Wrong password!");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password! contact simon");
 
       const name = document.getElementById("name").value.trim();
       const amount = Number(document.getElementById("amount").value);
@@ -298,7 +298,7 @@
 
     function editEntry(i) {
       const pass = prompt("Enter password to edit:");
-      if (pass !== "thewanjihias") return alert("❌ Wrong password!");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password! contact simon");
       const newName = prompt("Edit name:", contributions[i].name);
       const newAmount = Number(prompt("Edit amount:", contributions[i].amount));
       const newNote = prompt("Edit note:", contributions[i].note);
@@ -309,7 +309,7 @@
 
     function deleteEntry(i) {
       const pass = prompt("Enter password to delete:");
-      if (pass !== "thewanjihias") return alert("❌ Wrong password!");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password! contact simon");
       if (confirm("Are you sure?")) {
         contributions.splice(i, 1);
         renderTable();
