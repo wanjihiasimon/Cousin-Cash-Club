@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cousin Contribution Hub 🎉</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #e3f2fd, #fff3e0);
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #0277bd;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      flex: 1 1 150px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #ffcc80;
+      color: #000;
+    }
+    button {
+      background: #0288d1;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #01579b;
+    }
+    /* Stats cards */
+    #stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      flex: 1 1 200px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .stat-card span {
+      display: block;
+      font-size: 22px;
+      margin-top: 5px;
+    }
+    .blue { border-top: 6px solid #0288d1; }
+    .orange { border-top: 6px solid #fb8c00; }
+    .green { border-top: 6px solid #43a047; }
+    /* Countdown */
+    #countdown {
+      text-align: center;
+      font-size: 18px;
+      margin: 15px;
+      font-weight: bold;
+      color: #d84315;
+    }
+    /* Marquee */
+    marquee {
+      background: #0288d1;
+      color: #fff;
+      padding: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    /* Login screen */
+    #loginScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+      background: linear-gradient(135deg, #42a5f5, #ffb74d, #66bb6a);
+      color: #fff;
+      animation: fadeIn 2s ease;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px; /* space below nav */
+    }
+    #loginScreen h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    #loginBox {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    #loginScreen input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      width: 200px;
+      text-align: center;
+    }
+    #loginScreen button {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      background: #0288d1;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    #loginScreen button:hover {
+      transform: scale(1.05);
+      background: #01579b;
+    }
+    #verse {
+      margin-top: 15px;
+      font-style: italic;
+      font-size: 15px;
+      max-width: 450px;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    /* Navigation */
+    nav {
+      background:#0277bd;
+      padding:12px 0;
+      text-align:center;
+      margin-bottom:20px;
+    }
+    nav a {
+      color:white;
+      margin:0 15px;
+      text-decoration:none;
+      font-weight:bold;
+      transition:color 0.3s;
+    }
+    nav a:hover { color:#ffcc80; }
+    /* Mobile optimizations */
+    @media (max-width: 600px) {
+      .form { flex-direction: column; }
+      input, button { flex: 1 1 100%; }
+      #stats { flex-direction: column; align-items: center; }
+      #loginScreen h1 { font-size: 22px; }
+      #verse { font-size: 14px; }
+      nav a { display:block; margin:5px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <marquee behavior="scroll" direction="left">
+    How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing. – Psalm 133:1
+  </marquee>
+
+  <!-- Navigation: always visible -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="contributions.html">Contributions</a>
+    <a href="activities.html">Activities</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <!-- Login Screen -->
+  <div id="loginScreen">
+    <h1>🔐 The Wanjihia's Contribution Hub</h1>
+    <div id="loginBox">
+      <input id="loginPass" type="password" placeholder="Enter password">
+      <button onclick="login()">Login</button>
+    </div>
+    <p id="verse">"How good and pleasant it is when cousins come together in unity, for there YAHWEH bestows His blessing." – Psalm 133:1</p>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" style="display:none;">
+    <div class="container">
+      <h1>🎉 Cousin Contribution Tracker 🎉</h1>
+      <div id="countdown"></div>
+
+      <div class="form">
+        <input id="name" placeholder="Cousin Name">
+        <input id="amount" type="number" placeholder="Contribution (Ksh)">
+        <input id="note" placeholder="Note (payment date)">
+        <button onclick="addContribution()">Add</button>
+      </div>
+
+      <!-- Stats -->
+      <div id="stats">
+        <div class="stat-card blue">💰 Total <span id="total">Ksh 0</span></div>
+        <div class="stat-card orange">👥 Contributors <span id="contributors">0</span></div>
+        <div class="stat-card green">📊 Average <span id="average">Ksh 0</span></div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Contribution (Ksh)</th><th>Note</th><th>Action</th></tr>
+        </thead>
+        <tbody id="contribTable"></tbody>
+      </table>
+
+      <canvas id="barChart" height="120"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let contributions = [
+      { name: "S.W.N", amount: 2400, note: "" },
+      { name: "S.G.N", amount: 2400, note: "" },
+      { name: "M.N.T", amount: 2400, note: "" },
+      { name: "M.W.K", amount: 2400, note: "" },
+      { name: "S.K.T", amount: 2400, note: "" },
+      { name: "W.N", amount: 2400, note: "" }
+    ];
+    let chart;
+
+    function login() {
+      const pass = document.getElementById("loginPass").value;
+      if (pass === "lifelong") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        renderTable();
+      } else {
+        alert("❌ Wrong password!");
+      }
+    }
+
+    function updateStats() {
+      const total = contributions.reduce((sum, c) => sum + c.amount, 0);
+      const count = contributions.length;
+      const avg = count ? (total / count).toFixed(2) : 0;
+      document.getElementById("total").textContent = "Ksh " + total;
+      document.getElementById("contributors").textContent = count;
+      document.getElementById("average").textContent = "Ksh " + avg;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("contribTable");
+      tbody.innerHTML = "";
+      contributions.forEach((c, i) => {
+        tbody.innerHTML += `<tr>
+          <td>${c.name}</td>
+          <td>Ksh ${c.amount}</td>
+          <td>${c.note || ""}</td>
+          <td>
+            <button onclick="editEntry(${i})">✏️ Edit</button>
+            <button onclick="deleteEntry(${i})">🗑️ Delete</button>
+          </td>
+        </tr>`;
+      });
+      updateStats();
+      renderChart();
+    }
+
+    function addContribution() {
+      const pass = prompt("Enter password to add contribution:");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password! contact simon");
+
+      const name = document.getElementById("name").value.trim();
+      const amount = Number(document.getElementById("amount").value);
+      const note = document.getElementById("note").value.trim();
+      if (!name || !amount) return alert("Please enter valid name and amount!");
+
+      contributions.push({ name, amount, note });
+      renderTable();
+      document.getElementById("name").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("note").value = "";
+    }
+
+    function editEntry(i) {
+      const pass = prompt("Enter password to edit:");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password! contact simon");
+      const newName = prompt("Edit name:", contributions[i].name);
+      const newAmount = Number(prompt("Edit amount:", contributions[i].amount));
+      const newNote = prompt("Edit note:", contributions[i].note);
+      if (!newName || !newAmount) return;
+      contributions[i] = { name: newName, amount: newAmount, note: newNote };
+      renderTable();
+    }
+
+    function deleteEntry(i) {
+      const pass = prompt("Enter password to delete:");
+      if (pass !== "thewanjihias") return alert("❌ Wrong password! contact simon");
+      if (confirm("Are you sure?")) {
+        contributions.splice(i, 1);
+        renderTable();
+      }
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById("barChart").getContext("2d");
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: contributions.map(c => c.name),
+          datasets: [{
+            label: "Contributions (Ksh)",
+            data: contributions.map(c => c.amount),
+            backgroundColor: ["#42a5f5", "#fb8c00", "#66bb6a", "#ab47bc", "#ef5350"]
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+    }
+
+    function countdown() {
+      const endDate = new Date("DECEMBER 6, 2025").getTime();
+      const now = new Date().getTime();
+      const days = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
+      document.getElementById("countdown").textContent =
+        days >= 0 ? `⏳ Days left to contribute: ${days}` : "✅ Contributions closed!";
+    }
+
+    setInterval(countdown, 60000);
+    countdown();
+    renderTable();
+  </script>
+</body>
+</html>

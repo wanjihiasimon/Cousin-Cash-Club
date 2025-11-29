@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wanjihia Cousins Activities</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: "Poppins", Arial, sans-serif;
+    background: linear-gradient(to right, #e3f2fd, #fff3e0);
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+
+  /* Navigation bar */
+  nav {
+    background: #0288d1;
+    padding: 12px 0;
+    text-align: center;
+    font-weight: bold;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 18px;
+    transition: color 0.3s;
+  }
+  nav a:hover {
+    color: #ffcc80;
+  }
+
+  h1 {
+    text-align: center;
+    color: #0277bd;
+    margin-top: 20px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  .form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  input, button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+
+  button {
+    background: #0288d1;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background: #01579b;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+
+  th {
+    background: #ffcc80;
+    color: #000;
+  }
+
+  canvas {
+    margin-top: 30px;
+  }
+
+  @media (max-width: 600px) {
+    .form {
+      flex-direction: column;
+    }
+    input, button {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav>
+  <a href="index.html">Home</a> |
+  <a href="activities.html">Activities</a> |
+  <a href="gallery.html">Gallery</a> |
+  <a href="about.html">About</a> |
+  <a href="contact.html">Contact</a>
+</nav>
+
+<div class="container">
+  <h1>📋 Activities Tracker</h1>
+
+  <div class="form">
+    <input id="activityName" placeholder="Activity Name">
+    <input id="venue" placeholder="Venue">
+    <input id="date" type="date">
+    <input id="amount" type="number" placeholder="Contribution Amount">
+    <button onclick="addActivity()">Add Activity</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Activity</th>
+        <th>Venue</th>
+        <th>Date</th>
+        <th>Total Contribution (Ksh)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="activityTable"></tbody>
+  </table>
+
+  <canvas id="activityChart" height="150"></canvas>
+</div>
+
+<script>
+let activities = [
+  { activity: "Grandpa Visit", venue: "Muhakaini", date: "2024-12-20", amount: 18000 },
+  { activity: "Aunt Wanjiru Visit", venue: "Kiambu", date: "2025-12-14", amount: 14400 },
+  { activity: "Shush Regina 80th Birthday", venue: "Olborosat", date: "2025-12-26", amount: 0 }
+];
+
+let chart;
+
+function renderTable() {
+  const tbody = document.getElementById("activityTable");
+  tbody.innerHTML = "";
+  activities.forEach((a, i) => {
+    tbody.innerHTML += `<tr>
+      <td>${a.activity}</td>
+      <td>${a.venue}</td>
+      <td>${a.date}</td>
+      <td>Ksh ${a.amount}</td>
+      <td>
+        <button onclick="editActivity(${i})">✏️ Edit</button>
+        <button onclick="deleteActivity(${i})">🗑️ Delete</button>
+      </td>
+    </tr>`;
+  });
+  renderChart();
+}
+
+function addActivity() {
+  const pass = prompt("Enter password to add activity:");
+  if(pass !== "thewanjihias") return alert("❌ Wrong password!");
+
+  const activity = document.getElementById("activityName").value.trim();
+  const venue = document.getElementById("venue").value.trim();
+  const date = document.getElementById("date").value;
+  const amount = Number(document.getElementById("amount").value);
+
+  if(!activity || !venue || !date || !amount) return alert("Please fill all fields correctly!");
+
+  activities.push({ activity, venue, date, amount });
+  renderTable();
+
+  document.getElementById("activityName").value = "";
+  document.getElementById("venue").value = "";
+  document.getElementById("date").value = "";
+  document.getElementById("amount").value = "";
+}
+
+function editActivity(i) {
+  const pass = prompt("Enter password to edit:");
+  if(pass !== "thewanjihias") return alert("❌ Wrong password!");
+
+  const activity = prompt("Edit Activity Name:", activities[i].activity);
+  const venue = prompt("Edit Venue:", activities[i].venue);
+  const date = prompt("Edit Date:", activities[i].date);
+  const amount = Number(prompt("Edit Contribution Amount:", activities[i].amount));
+
+  if(!activity || !venue || !date || !amount) return;
+
+  activities[i] = { activity, venue, date, amount };
+  renderTable();
+}
+
+function deleteActivity(i) {
+  const pass = prompt("Enter password to delete:");
+  if(pass !== "thewanjihias") return alert("❌ Wrong password!");
+
+  if(confirm("Are you sure you want to delete this activity?")) {
+    activities.splice(i,1);
+    renderTable();
+  }
+}
+
+function renderChart() {
+  const ctx = document.getElementById("activityChart").getContext("2d");
+  if(chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: activities.map(a => a.activity),
+      datasets: [{
+        label: 'Contribution (Ksh)',
+        data: activities.map(a => a.amount),
+        backgroundColor: activities.map((_, i) => `hsl(${i * 60}, 70%, 50%)`)
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      animation: { duration: 1000, easing: 'easeOutBounce' },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 5000 } }
+      }
+    }
+  });
+}
+
+renderTable();
+</script>
+</body>
+</html>
