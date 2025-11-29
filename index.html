@@ -238,7 +238,9 @@
       { name: "S.W.N", amount: 2400, note: "" },
       { name: "S.G.N", amount: 2400, note: "" },
       { name: "M.N.T", amount: 2400, note: "" },
-      { name: "M.W.K", amount: 2400, note: "" }
+      { name: "M.W.K", amount: 2400, note: "" },
+      { name: "S.K.T", amount: 2400, note: "" },
+      { name: "W.N", amount: 2400, note: "" }
     ];
     let chart;
 
@@ -334,7 +336,7 @@
     }
 
     function countdown() {
-      const endDate = new Date("November 30, 2025").getTime();
+      const endDate = new Date("DECENBER 6, 2025").getTime();
       const now = new Date().getTime();
       const days = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
       document.getElementById("countdown").textContent =
